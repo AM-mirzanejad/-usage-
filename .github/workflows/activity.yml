@@ -1,19 +1,15 @@
 name: Auto Commit Activity
 
-# تعیین زمان‌بندی اجرای اسکریپت
 on:
   schedule:
-    # اجرا به صورت خودکار: هر روز ساعت 12 ظهر (به وقت هماهنگ جهانی - UTC)
     - cron: '0 12 * * *'
-
-  # این خط به شما اجازه می‌دهد از داخل سایت گیت‌هاب اسکریپت را دستی هم اجرا کنید
   workflow_dispatch: 
 
 jobs:
   update-log:
     runs-on: ubuntu-latest
     permissions:
-      contents: write # دادن دسترسی به ربات برای ثبت تغییرات در مخزن شما
+      contents: write
 
     steps:
       - name: Checkout repository
@@ -29,13 +25,9 @@ jobs:
 
       - name: Commit and Push changes
         run: |
-          # تنظیمات کاربری ربات گیت‌هاب برای ثبت نام در تاریخچه کامیت‌ها
           git config --global user.name "github-actions[bot]"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          
-          # اضافه کردن فایل تغییر یافته و ثبت کامیت
+          touch activity_log.txt
           git add activity_log.txt
           git commit -m "Auto-update activity log to keep the graph green" || echo "No changes to commit"
-          
-          # ارسال تغییرات به مخزن
           git push
