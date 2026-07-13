@@ -1,33 +1,22 @@
-name: Auto Commit Activity
+steps:
+  - name: Checkout repository
+    uses: actions/checkout@v4
+    with:
+      fetch-depth: 0 
 
-on:
-  schedule:
-    - cron: '0 12 * * *'
-  workflow_dispatch: 
+  - name: Set up Python
+    uses: actions/setup-python@v5
+    with:
+      python-version: '3.x'
 
-jobs:
-  update-log:
-    runs-on: ubuntu-latest
-    permissions:
-      contents: write
+  - name: Configure Git
+    run: |
+      git config --global user.name "github-actions[bot]"
+      git config --global user.email "github-actions[bot]@users.noreply.github.com"
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+  - name: Run Intelligent Python Script
+    run: python auto_commit.py
 
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Run Python script
-        run: python auto_commit.py
-
-      - name: Commit and Push changes
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          touch activity_log.txt
-          git add activity_log.txt
-          git commit -m "Auto-update activity log to keep the graph green" || echo "No changes to commit"
-          git push
+  - name: Push changes to GitHub
+    run: |
+      git push || echo "No new commits to push today."
