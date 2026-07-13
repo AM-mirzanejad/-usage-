@@ -1,27 +1,39 @@
-steps:
-  - name: Checkout repository
-    uses: actions/checkout@v4
-    with:
-      fetch-depth: 0 # برای اینکه بتونه بین شاخه‌ها (Branch) جابجا بشه
+name: Auto Commit Activity
 
-  - name: Configure Git
-    run: |
-      # کانفیگ کردن گیت قبل از اجرای پایتون
-      git config --global user.name "github-actions[bot]"
-      git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+on:
+  schedule:
+    - cron: '50 23 * * *'
+  workflow_dispatch: 
 
-  - name: Set up Python
-    uses: actions/setup-python@v5
-    with:
-      python-version: '3.x'
+jobs:
+  update-log:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      issues: write
+      pull-requests: write
 
-  - name: Run Python script
-    env:
-      # دادن کلید دسترسی به پایتون برای ساخت PR و Issue
-      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-    run: python auto_commit.py
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
-  - name: Push final changes
-    run: |
-      # پوش کردن تغییراتی که پایتون روی شاخه اصلی (main) داده
-      git push origin main || echo "No changes to push"
+      - name: Configure Git
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Run Python script
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: python auto_commit.py
+
+      - name: Push final changes
+        run: |
+          git push origin main || echo "No changes to push"
