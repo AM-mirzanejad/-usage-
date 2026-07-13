@@ -2,21 +2,26 @@ steps:
   - name: Checkout repository
     uses: actions/checkout@v4
     with:
-      fetch-depth: 0 
+      fetch-depth: 0 # برای اینکه بتونه بین شاخه‌ها (Branch) جابجا بشه
+
+  - name: Configure Git
+    run: |
+      # کانفیگ کردن گیت قبل از اجرای پایتون
+      git config --global user.name "github-actions[bot]"
+      git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
 
   - name: Set up Python
     uses: actions/setup-python@v5
     with:
       python-version: '3.x'
 
-  - name: Configure Git
-    run: |
-      git config --global user.name "github-actions[bot]"
-      git config --global user.email "github-actions[bot]@users.noreply.github.com"
-
-  - name: Run Intelligent Python Script
+  - name: Run Python script
+    env:
+      # دادن کلید دسترسی به پایتون برای ساخت PR و Issue
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
     run: python auto_commit.py
 
-  - name: Push changes to GitHub
+  - name: Push final changes
     run: |
-      git push || echo "No new commits to push today."
+      # پوش کردن تغییراتی که پایتون روی شاخه اصلی (main) داده
+      git push origin main || echo "No changes to push"
