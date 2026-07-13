@@ -2,7 +2,7 @@ name: Auto Commit Activity
 
 on:
   schedule:
-    - cron: '50 23 * * *'
+    - cron: '45 20 * * *'
   workflow_dispatch: 
 
 jobs:
