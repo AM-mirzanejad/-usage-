@@ -1,9 +1,16 @@
 name: Auto Commit Activity
 
 on:
+  push:
+    branches:
+      - main
   schedule:
-    - cron: '45 20 * * *'
+    - cron: '20 20 * * *'
   workflow_dispatch: 
+
+concurrency:
+  group: auto-commit-group
+  cancel-in-progress: false
 
 jobs:
   update-log:
@@ -28,12 +35,17 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.x'
+          
+      - name: Random Delay
+        run: |
+          sleep $((RANDOM % 600))
 
       - name: Run Python script
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: python auto_commit.py
 
-      - name: Push final changes
+      - name: Commit and Push changes
         run: |
+          git pull --rebase origin main
           git push origin main || echo "No changes to push"
