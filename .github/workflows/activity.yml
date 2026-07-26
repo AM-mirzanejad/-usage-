@@ -26,10 +26,10 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Configure Git
-        run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+  - name: Configure Git
+  run: |
+    git config --global user.name "AM-mirzanejad"
+    git config --global user.email "am.mirzanejad@gmail.com"
 
       - name: Set up Python
         uses: actions/setup-python@v5
