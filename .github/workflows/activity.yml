@@ -31,6 +31,6 @@ jobs:
 
       - name: Run Activity Simulator
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.MY_PAT }}
         run: |
           python activity_simulator.py
