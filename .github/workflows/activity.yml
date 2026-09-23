@@ -2,24 +2,35 @@ name: Auto Commit Activity
 
 on:
   schedule:
-    - cron: '0 0 * * *' # هر روز سر ساعت مشخص اجرا می‌شود
-  workflow_dispatch: # برای اینکه بتوانید دستی هم اجرا کنید
+    - cron: '0 0 * * *' # Executes daily at midnight UTC
+  workflow_dispatch: # Allows for manual triggering
+
+permissions:
+  contents: write
+  issues: write
+  pull-requests: write
 
 jobs:
   autocommit:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
       - name: Configure Git
         run: |
           git config --global user.name "AM-mirzanejad"
           git config --global user.email "am.mirzanejad@gmail.com"
 
-      - name: Make Changes and Commit
+      - name: Run Activity Simulator
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          echo "$(date)" >> activity.txt
-          git add activity.txt
-          git commit -m "Daily automated commit" || exit 0
-          git push
+          python activity_simulator.py
