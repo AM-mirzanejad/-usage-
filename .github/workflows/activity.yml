@@ -34,3 +34,9 @@ jobs:
           GH_TOKEN: ${{ secrets.MY_PAT }}
         run: |
           python activity_simulator.py
+
+      - name: Commit and Push
+        run: |
+          git add .
+          git commit -m "Automated commit" || echo "No changes to commit"
+          git push
